@@ -3,7 +3,7 @@ import re
 import numpy as np
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-# --- CONFIGURATION ---
+# config
 MODEL_ID = "openai/gpt-oss-20b"
 RESULTS_FILE = "fixedresults.txt"
 RUBRIC_FILE = "Criterion.md" 
@@ -35,7 +35,6 @@ def parse_results(file_path):
         #regex to catch the content
         user_match = re.search(r"user\s*(.*?)\s*<\|im_start\|>assistant", entry, re.DOTALL)
         baseline_match = re.search(r"BASELINE OUTPUT:\s*(.*?)\s*------------------------------", entry, re.DOTALL)
-        # Captures until the next separator or end of string
         steered_match = re.search(r"STEERED OUTPUT:\s*(.*)", entry, re.DOTALL)
         
         if user_match and baseline_match and steered_match:
@@ -49,7 +48,7 @@ def parse_results(file_path):
 
     return data
 
-# 3. JUDGING FUNCTION
+# judging
 def evaluate(rubric, query, response, label):
     judge_prompt = f"{rubric}\n\n[DATA TO EVALUATE]\nUser Query: {query}\nAssistant ({label}): {response}"
     
@@ -72,7 +71,7 @@ def evaluate(rubric, query, response, label):
     
     return tokenizer.decode(outputs[0][len(inputs[0]):], skip_special_tokens=True)
 
-# 4. SUMMARY LOGIC
+# summary
 def calculate_summary(results_list):
     stats = {
         "BASELINE": {"Pedagogy": [], "Relevance": [], "NoSpoilers": 0, "Brevity": 0},
